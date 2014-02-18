@@ -795,6 +795,77 @@ subroutine rw_vdiff_binned(g, dT, nstep)
   integer,  intent(in) :: nstep
 end subroutine rw_vdiff_binned
 
+
+!----------------------------------------------------
+! Random-Walk vertical diffusion using constant 
+!----------------------------------------------------
+subroutine rw_vdiff_const(g, dT, kh)
+  use utilities, only : normal
+  type(igroup), intent(inout) :: g
+  real(sp), intent(in) :: dT
+  real(sp), intent(in) :: kh
+  !----------------------------
+  integer,  pointer :: istatus(:)
+  integer,  pointer :: cell(:)
+  real(sp), pointer :: x(:)
+  real(sp), pointer :: y(:)
+  real(sp), pointer :: s(:)
+  real(sp), pointer :: h(:)
+  real(sp), allocatable :: zeta(:)
+  real(sp), parameter :: delta_s = 0.05
+  real(sp) :: deltaT,fac,randy,dz,depth,dkh_dz
+  integer  :: n,p,np
+
+  !set problem size and time step
+  np = g%nind
+  deltaT = dT
+
+  !set pointers to particle positions and status
+  call get_state('status',g,istatus)
+  call get_state('cell',g,cell)
+  call get_state('x',g,x)
+  call get_state('y',g,y)
+  call get_state('s',g,s)
+  call get_state('h',g,h)
+
+  !allocate local data
+
+  allocate(zeta(np)); zeta = zero
+
+  !set constants
+  fac = (2./rvar)*deltaT  ![ 2*r^-1*deltaT], r = variance of uniform rw, set in gparms
+
+  call interp(np,x,y,cell,istatus,h_char,h,3)
+  call interp(np,x,y,cell,istatus,zeta_char,zeta,3)
+
+    ! => main loop over particles
+    do p=1,np
+      if(istatus(p) < 1)cycle
+
+      !update particle position using Visser modified random walk 
+      depth  = h(p)+zeta(p)
+      dz     = normal()*sqrt(fac*kh) !Visser-modified
+      s(p)   = s(p) + dz/depth
+!      dz     = unitrand()*sqrt(2.*kh(p))                 !naive
+
+      !set boundary conditions at free surface and bottom
+      s(p) = max(s(p),-(2.0+s(p))) !reflect off bottom
+      s(p) = min(s(p),0.0)         !don't pierce free surface
+
+    end do
+    ! <= end particle loop
+
+  !deallocate workspace and nullify pointers
+  deallocate(zeta)
+  nullify(x)
+  nullify(y)
+  nullify(s)
+  nullify(h)
+  nullify(istatus)
+
+end subroutine rw_vdiff_const
+
+
 subroutine sz_trans(np,g)
   integer, intent(in) :: np
   type(igroup), intent(inout) :: g

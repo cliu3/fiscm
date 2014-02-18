@@ -126,6 +126,7 @@ integer, parameter :: VDIFF_NONE     = 0
 integer, parameter :: VDIFF_VARIABLE = 1
 integer, parameter :: VDIFF_SPLINED  = 2     !unfinished
 integer, parameter :: VDIFF_BINNED   = 3     !unfinished
+integer, parameter :: VDIFF_CONST    = 4     !unfinished
 !-model setup control parameters----------------------------------------------------
 integer, parameter :: max_nf = 100 
 real(sp), PARAMETER :: tpi  =3.14159265/180.0*6371.*1000.

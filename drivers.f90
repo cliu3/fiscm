@@ -71,6 +71,7 @@ subroutine do_adv_diff(ng,g,dT,time)
       if(g(n)%vdiff_type == VDIFF_VARIABLE) call rw_vdiff(g(n), dT, g(n)%vdiff_substeps)  
       if(g(n)%vdiff_type == VDIFF_SPLINED ) call rw_vdiff_splined(g(n), dT, g(n)%vdiff_substeps)  
       if(g(n)%vdiff_type == VDIFF_BINNED  ) call rw_vdiff_binned(g(n), dT, g(n)%vdiff_substeps)  
+      if(g(n)%vdiff_type == VDIFF_CONST   ) call rw_vdiff_const(g(n), dT, g(n)%vdiff_const_val)  
     case default
       write(*,*)'space_dim must be [0,2,3]'
       stop
