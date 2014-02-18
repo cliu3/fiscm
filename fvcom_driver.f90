@@ -1009,7 +1009,7 @@ subroutine advect3D(g,deltaT,np,time)
   real(sp), dimension(np) :: zeta1,zeta2,pdx,pdy,pdz
   real(sp), dimension(np) :: wu,wu1,wu2,wv,wv1,wv2
   real(sp), dimension(np) :: pdxt,pdyt,pdzt
-  real(sp), dimension(np) :: zn
+  !real(sp), dimension(np) :: zn
 
   real(sp), dimension(np,0:mstage) :: chix,chiy,chiz  
   real(sp), parameter              :: eps  = 1.0E-5
@@ -1037,6 +1037,10 @@ subroutine advect3D(g,deltaT,np,time)
   pdx  =x
   pdy  =y
   pdz  =s
+
+  w  = 0.0_sp
+  w1 = 0.0_sp
+  w2 = 0.0_sp
   !--Loop over RK Stages
   do ns=1,mstage
 
@@ -1080,10 +1084,12 @@ subroutine advect3D(g,deltaT,np,time)
   !write(*,*)np,pdx,pdy,pdz,cell,istatus,u_char,u1
   call interp(np,pdx,pdy,pdz,cell,istatus,u_char,u1,3)
   call interp(np,pdx,pdy,pdz,cell,istatus,v_char,v1,3)
-  call interp(np,pdx,pdy,pdz,cell,istatus,omega_char,w1,3) !wts means omega
   call interp(np,pdx,pdy,pdz,cell,istatus,u_char,u2,4)
   call interp(np,pdx,pdy,pdz,cell,istatus,v_char,v2,4)
+  if (fix_dep ==0)then
+  call interp(np,pdx,pdy,pdz,cell,istatus,omega_char,w1,3) !wts means omega  
   call interp(np,pdx,pdy,pdz,cell,istatus,omega_char,w2,4)
+  endif
   call interp(np,pdx,pdy,cell,istatus,h_char,h,3)
   call interp(np,pdx,pdy,cell,istatus,zeta_char,zeta1,3)
   call interp(np,pdx,pdy,cell,istatus,zeta_char,zeta2,4)
@@ -1106,7 +1112,9 @@ subroutine advect3D(g,deltaT,np,time)
    v  = (1.0_sp-c_rk(ns))*v1 + c_rk(ns)*v2
 
      endif
+   if (fix_dep ==0)then
    w  = (1.0_sp-c_rk(ns))*w1 + c_rk(ns)*w2
+   endif
    zeta  = (1.0_sp-c_rk(ns))*zeta1  + c_rk(ns)*zeta2
 
 !Added by Xinyou Lin for DVM modelling:WP=WP+WM
@@ -1178,7 +1186,7 @@ end do
     where(istatus==EXITED)
       istatus=ACTIVE
     end where
-  zn = s*(h + zeta) + zeta  
+  !zn = s*(h + zeta) + zeta  
   s(:)  = pdzt(:)
   !--Adjust Depth of Updated Particle Positions----------------------------------!
   s = max(s,-(2.0+s))                 !Reflect off Bottom

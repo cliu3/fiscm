@@ -5,10 +5,10 @@
  ireport         = 1,
  ngroups         = 1,
  nfiles_in       = 1,
- forcing_file    = 'testing/solidbody/solidbody.nc', 
+ forcing_file    = 'solidbody.nc', 
  spherical       = 0,
  sz_cor          = 0,
- fix_dep         = 0,
+ fix_dep         = 2,
  dvm_bio         = 0,
  wind_type       = 0,
  dvmh_up         = 15.0,
@@ -44,13 +44,13 @@
 
 
 &NML_GROUP
- init_pos_file    = 'testing/solidbody/solidbody.dat', 
+ init_pos_file    = 'solidbody.dat', 
  space_dim        = 3,
  group_name       = 'Test', 
  hdiff_type       = 0,
  hdiff_const_val  = 0.1,
- vdiff_type       = 0,
- vdiff_const_val  = 0.0,
+ vdiff_type       = 4,
+ vdiff_const_val  = 2e-5,
  vdiff_substeps   = 500
  intvl_bio        = 5,
  biology          = T,
@@ -68,6 +68,17 @@
  state_netcdf_out       = 1,
  state_vartype          = 1,
  state_initval_int      = 1,
+ state_initval_flt      = 0.0,
+ state_from_ext_var     = 'NONE'
+/
+
+ &NML_STATEVAR
+ state_varname          = 'tid',
+ state_longname         = 'flag for individuals',
+ state_units            = '-',
+ state_netcdf_out       = 1,
+ state_vartype          = 1,
+ state_initval_int      = 0,
  state_initval_flt      = 0.0,
  state_from_ext_var     = 'NONE'
 /

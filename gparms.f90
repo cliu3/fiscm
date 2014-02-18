@@ -132,7 +132,7 @@ integer, parameter :: max_nf = 100
 real(sp), PARAMETER :: tpi  =3.14159265/180.0*6371.*1000.
 integer :: spherical   != 0  ! 0 - x y(m)  ;1 - lon lat(deg)
 integer ::  sz_cor     != 1  ! 0 - input s ;1 - input z
-integer :: fix_dep     != 0  ! 0 - unfixed ;1 - fix(dep)
+integer :: fix_dep     != 0  ! 0 - unfixed ;1 - fix(dep)    ;other - no vertical advection
 integer :: dvm_bio     != 1  ! 0 - nodvm   ;1 - dvm(bio)
 integer :: wind_type   != 0  ! 0 - nowind  ;1 - wind
 real(sp)    :: dvmh_up,dvmh_dn  ! up-from surface;dn-from bottom
